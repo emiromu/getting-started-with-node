@@ -40,4 +40,3 @@ server.on('request', (req, res) => {
 });
 
 server.listen(8080);
-//testing : curl localhost:8080
