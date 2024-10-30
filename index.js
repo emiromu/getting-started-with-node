@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 
 const __dirname = path.resolve();
+const files = fs.readdirSync(__dirname);
 
 /*
 localhost:8080 should take users to index.html
@@ -22,65 +23,27 @@ server.on('request', (req, res) => {
     if(req.method != 'GET'){
         res.end();
     }
-    else{
-        switch (req.url) {
-        case '/':
-            const indexPage = new Promise((resolve, reject) => {
-                fs.readFile(__dirname+'/index.html', 'utf8', (err, data) => {
-                    if (err) {
-                      console.error(err);
-                      reject(err);
-                    }
-                    res.writeHead(200, { 'Content-Type': 'text/html' });
-                    res.write(data);
-                    res.end();
-                    resolve(res)
-                });
-              });
-            break;
-        case '/about':
-            const aboutPage = new Promise((resolve, reject) => {
-                fs.readFile(__dirname+'/about.html', 'utf8', (err, data) => {
-                    if (err) {
-                      console.error(err);
-                      reject(err);
-                    }
-                    res.writeHead(200, { 'Content-Type': 'text/html' });
-                    res.write(data);
-                    res.end();
-                    resolve(res)
-                });
-              });
-            break;
-        case '/contact-me':
-            const contactmePage = new Promise((resolve, reject) => {
-                fs.readFile(__dirname+'/contact-me.html', 'utf8', (err, data) => {
-                    if (err) {
-                      console.error(err);
-                      reject(err);
-                    }
-                    res.writeHead(200, { 'Content-Type': 'text/html' });
-                    res.write(data);
-                    res.end();
-                    resolve(res)
-                });
-              });
-            break;
-        default:
-            const noPage = new Promise((resolve, reject) => {
-                fs.readFile(__dirname+'/404.html', 'utf8', (err, data) => {
-                    if (err) {
-                      console.error(err);
-                      reject(err);
-                    }
-                    res.writeHead(200, { 'Content-Type': 'text/html' });
-                    res.write(data);
-                    res.end();
-                    resolve(res)
-                });
-              });
-        }
+    let url=req.url;
+    if(url=='/'){
+        url='/index';
     }
+    if(!files.includes(url.substring(1)+'.html')){
+        url='/404';
+    }
+    const indexPage = new Promise((resolve, reject) => {
+        fs.readFile(__dirname+url+'.html', 'utf8', (err, data) => {
+            if (err) {
+              reject(err);
+            }
+            else
+            {
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.write(data);
+            res.end();
+            resolve(res);
+            }
+        });
+      });
 });
 
 server.listen(8080);
