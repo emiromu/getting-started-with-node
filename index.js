@@ -23,7 +23,6 @@ server.on('request', (req, res) => {
         res.end();
     }
     else{
-        let resData;
         switch (req.url) {
         case '/':
             const indexPage = new Promise((resolve, reject) => {
